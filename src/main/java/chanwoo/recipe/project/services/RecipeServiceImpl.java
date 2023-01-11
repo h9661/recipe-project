@@ -2,11 +2,13 @@ package chanwoo.recipe.project.services;
 
 import chanwoo.recipe.project.domain.Recipe;
 import chanwoo.recipe.project.repository.RecipeRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 @Service
 public class RecipeServiceImpl implements RecipeService {
 
@@ -18,6 +20,8 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public Set<Recipe> getRecipes() {
+        log.debug("Im in the service");
+
         Set<Recipe> recipeSet = new HashSet<>();
 
         recipeRepository.findAll().forEach(recipe -> recipeSet.add(recipe));
