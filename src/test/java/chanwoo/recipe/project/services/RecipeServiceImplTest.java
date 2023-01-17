@@ -1,5 +1,8 @@
 package chanwoo.recipe.project.services;
 
+import chanwoo.recipe.project.commands.RecipeCommand;
+import chanwoo.recipe.project.converters.RecipeCommandToRecipe;
+import chanwoo.recipe.project.converters.RecipeToRecipeCommand;
 import chanwoo.recipe.project.domain.Recipe;
 import chanwoo.recipe.project.repository.RecipeRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,13 +27,23 @@ class RecipeServiceImplTest {
     @Mock
     RecipeRepository recipeRepository;
 
+    @Mock
+    RecipeCommandToRecipe recipeCommandToRecipe;
+
+    @Mock
+    RecipeToRecipeCommand recipeToRecipeCommand;
+
     RecipeServiceImpl recipeService;
 
     Recipe recipe = new Recipe();
 
     @BeforeEach
     void setUp() {
-        recipeService = new RecipeServiceImpl(recipeRepository);
+        recipeService = new RecipeServiceImpl(
+                recipeRepository,
+                recipeCommandToRecipe,
+                recipeToRecipeCommand
+        );
         recipe.setId(1L);
 
         recipeService.save(recipe);
@@ -58,5 +71,15 @@ class RecipeServiceImplTest {
         assertEquals(1L, retRecipe.getId());
         verify(recipeRepository, times(1)).findById(anyLong());
         verify(recipeRepository, never()).findAll();
+    }
+
+    @Test
+    void saveRecipeCommand() {
+        RecipeCommand recipeCommand = new RecipeCommand();
+        recipeCommand.setId(1L);
+
+        when(recipeService.saveRecipeCommand(recipeCommand)).thenReturn(recipeCommand);
+
+        assertEquals(1, recipeService.saveRecipeCommand(any()).getId());
     }
 }

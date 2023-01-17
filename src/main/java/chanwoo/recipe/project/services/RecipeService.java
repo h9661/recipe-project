@@ -1,5 +1,6 @@
 package chanwoo.recipe.project.services;
 
+import chanwoo.recipe.project.commands.RecipeCommand;
 import chanwoo.recipe.project.domain.Recipe;
 
 import java.util.Optional;
@@ -11,4 +12,6 @@ public interface RecipeService {
     Recipe save(Recipe recipe);
 
     Recipe findById(Long Id);
+
+    RecipeCommand saveRecipeCommand(RecipeCommand recipeCommand);
 }
