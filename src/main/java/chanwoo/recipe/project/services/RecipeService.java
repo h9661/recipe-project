@@ -9,13 +9,11 @@ import java.util.Set;
 public interface RecipeService {
     Set<Recipe> getRecipes();
 
-    Recipe save(Recipe recipe);
+    Recipe findById(Long l);
 
-    Recipe findById(Long Id);
+    RecipeCommand findCommandById(Long l);
 
-    RecipeCommand findCommandById(Long Id);
+    RecipeCommand saveRecipeCommand(RecipeCommand command);
 
-    void deleteById(Long Id);
-
-    RecipeCommand saveRecipeCommand(RecipeCommand recipeCommand);
+    void deleteById(Long idToDelete);
 }

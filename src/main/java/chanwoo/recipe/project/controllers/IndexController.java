@@ -18,16 +18,15 @@ import java.util.Optional;
 @Controller
 public class IndexController {
 
-    RecipeService recipeService;
+    private final RecipeService recipeService;
 
     public IndexController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }
 
-    @GetMapping
-    @RequestMapping({"index.html", "/", "", "index"})
-    public String getIndexPage(Model model){
-        log.debug("Getting index page");
+    @RequestMapping({"", "/", "/index"})
+    public String getIndexPage(Model model) {
+        log.debug("Getting Index page");
 
         model.addAttribute("recipes", recipeService.getRecipes());
 

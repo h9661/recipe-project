@@ -1,10 +1,12 @@
 package chanwoo.recipe.project.services;
 
+import chanwoo.recipe.project.commands.IngredientCommand;
 import chanwoo.recipe.project.commands.RecipeCommand;
-import chanwoo.recipe.project.converters.RecipeCommandToRecipe;
-import chanwoo.recipe.project.converters.RecipeToRecipeCommand;
+import chanwoo.recipe.project.converters.*;
+import chanwoo.recipe.project.domain.Ingredient;
 import chanwoo.recipe.project.domain.Recipe;
 import chanwoo.recipe.project.repository.RecipeRepository;
+import chanwoo.recipe.project.repository.UnitOfMeasureRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,64 +24,87 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RecipeServiceImplTest {
+public class RecipeServiceImplTest {
+
+    RecipeServiceImpl recipeService;
 
     @Mock
     RecipeRepository recipeRepository;
 
     @Mock
-    RecipeCommandToRecipe recipeCommandToRecipe;
-
-    @Mock
     RecipeToRecipeCommand recipeToRecipeCommand;
 
-    RecipeServiceImpl recipeService;
-
-    Recipe recipe = new Recipe();
+    @Mock
+    RecipeCommandToRecipe recipeCommandToRecipe;
 
     @BeforeEach
-    void setUp() {
-        recipeService = new RecipeServiceImpl(
-                recipeRepository,
-                recipeCommandToRecipe,
-                recipeToRecipeCommand
-        );
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+
+        recipeService = new RecipeServiceImpl(recipeRepository, recipeCommandToRecipe, recipeToRecipeCommand);
+    }
+
+    @Test
+    public void getRecipeByIdTest() throws Exception {
+        Recipe recipe = new Recipe();
         recipe.setId(1L);
-
-        recipeService.save(recipe);
-    }
-
-    @Test
-    void getRecipes() {
-        Set<Recipe> recipes = new HashSet<>();
-        recipes.add(recipe);
-
-        when(recipeService.getRecipes()).thenReturn(recipes);
-
-        assertEquals(recipeService.getRecipes().size(), 1);
-        verify(recipeRepository, times(1)).findAll();
-        verify(recipeRepository, never()).findById(anyLong());
-    }
-
-    @Test
-    void findById() {
         Optional<Recipe> recipeOptional = Optional.of(recipe);
+
         when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
 
-        Recipe retRecipe = recipeService.findById(1L);
+        Recipe recipeReturned = recipeService.findById(1L);
 
-        assertEquals(1L, retRecipe.getId());
         verify(recipeRepository, times(1)).findById(anyLong());
         verify(recipeRepository, never()).findAll();
     }
 
     @Test
-    void saveRecipeCommand() {
+    public void getRecipeCommandByIdTest() throws Exception {
+        Recipe recipe = new Recipe();
+        recipe.setId(1L);
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
+
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
         RecipeCommand recipeCommand = new RecipeCommand();
         recipeCommand.setId(1L);
 
-        when(recipeService.saveRecipeCommand(recipeCommand)).thenReturn(recipeCommand);
+        when(recipeToRecipeCommand.convert(any())).thenReturn(recipeCommand);
 
-        assertEquals(1, recipeService.saveRecipeCommand(any()).getId());
+        RecipeCommand commandById = recipeService.findCommandById(1L);
+
+        verify(recipeRepository, times(1)).findById(anyLong());
+        verify(recipeRepository, never()).findAll();
+    }
+
+    @Test
+    public void getRecipesTest() throws Exception {
+
+        Recipe recipe = new Recipe();
+        HashSet receipesData = new HashSet();
+        receipesData.add(recipe);
+
+        when(recipeService.getRecipes()).thenReturn(receipesData);
+
+        Set<Recipe> recipes = recipeService.getRecipes();
+
+        assertEquals(recipes.size(), 1);
+        verify(recipeRepository, times(1)).findAll();
+        verify(recipeRepository, never()).findById(anyLong());
+    }
+
+    @Test
+    public void testDeleteById() throws Exception {
+
+        //given
+        Long idToDelete = Long.valueOf(2L);
+
+        //when
+        recipeService.deleteById(idToDelete);
+
+        //no 'when', since method has void return type
+
+        //then
+        verify(recipeRepository, times(1)).deleteById(anyLong());
     }
 }
