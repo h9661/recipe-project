@@ -1,6 +1,8 @@
 package chanwoo.recipe.project.controllers;
 
 import chanwoo.recipe.project.commands.IngredientCommand;
+import chanwoo.recipe.project.commands.RecipeCommand;
+import chanwoo.recipe.project.commands.UnitOfMeasureCommand;
 import chanwoo.recipe.project.services.IngredientService;
 import chanwoo.recipe.project.services.RecipeService;
 import chanwoo.recipe.project.services.UnitOfMeasureService;
@@ -70,5 +72,20 @@ public class IngredientController {
         ingredientService.deleteByRecipeIdAndIngredientId(Long.valueOf(recipeId), Long.valueOf(id));
 
         return "redirect:/recipe/" + recipeId + "/ingredients";
+    }
+
+    @GetMapping
+    @RequestMapping("recipe/{recipeId}/ingredient/new")
+    public String newIngredient(@PathVariable String recipeId, Model model){
+        RecipeCommand recipeCommand = recipeService.findCommandById(Long.valueOf(recipeId));
+
+        IngredientCommand ingredientCommand = new IngredientCommand();
+        ingredientCommand.setRecipeId(recipeCommand.getId());
+        ingredientCommand.setUom(new UnitOfMeasureCommand());
+
+        model.addAttribute("ingredient", ingredientCommand);
+        model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
+
+        return "recipe/ingredient/ingredientform";
     }
 }
