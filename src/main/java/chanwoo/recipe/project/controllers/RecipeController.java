@@ -25,10 +25,6 @@ public class RecipeController {
     @GetMapping
     @RequestMapping("/recipe/{id}/show")
     public String showById(@PathVariable String id, Model model){
-        if(id == null || !id.matches("-?\\d+")){
-            throw new NumberFormatException("invalid id value: " + id);
-        }
-
         model.addAttribute("recipe", recipeService.findById(Long.valueOf(id)));
         return "recipe/show";
     }
@@ -78,14 +74,4 @@ public class RecipeController {
         return "recipe/404error";
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(NumberFormatException.class)
-    public String handleNumberFormatException(Exception exception, Model model){
-        log.error("handling number format exception");
-        log.error(exception.getMessage());
-
-        model.addAttribute("exception", exception);
-
-        return "recipe/400error";
-    }
 }

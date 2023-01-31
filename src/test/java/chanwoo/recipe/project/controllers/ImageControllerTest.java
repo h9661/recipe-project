@@ -41,7 +41,9 @@ class ImageControllerTest {
     @BeforeEach
     void setUp() {
         imageController = new ImageController(imageService, recipeService);
-        mockMvc = MockMvcBuilders.standaloneSetup(imageController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(imageController)
+                .setControllerAdvice(new ControllerExceptionHandler())
+                .build();
     }
 
     @Test
@@ -69,5 +71,12 @@ class ImageControllerTest {
         mockMvc.perform(multipart("/recipe/1/image").file(mockMultipartFile))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/recipe/1/show"));
+    }
+
+    @Test
+    void testNumberFormatHandle() throws Exception{
+        mockMvc.perform(get("/recipe/abcd/image"))
+                .andExpect(status().isBadRequest())
+                .andExpect(view().name("recipe/400error"));
     }
 }
