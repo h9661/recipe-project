@@ -65,8 +65,11 @@ public class RecipeController {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
-    public String handleNotFound(){
+    public String handleNotFound(Exception exception, Model model){
         log.error("Handling not found exception");
+        log.error(exception.getMessage());
+
+        model.addAttribute("exception", exception);
 
         return "recipe/404error";
     }
