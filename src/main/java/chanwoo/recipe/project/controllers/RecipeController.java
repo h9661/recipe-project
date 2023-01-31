@@ -2,11 +2,14 @@ package chanwoo.recipe.project.controllers;
 
 import chanwoo.recipe.project.commands.RecipeCommand;
 import chanwoo.recipe.project.domain.Recipe;
+import chanwoo.recipe.project.exceptions.NotFoundException;
 import chanwoo.recipe.project.services.RecipeService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
 @Controller
@@ -58,5 +61,13 @@ public class RecipeController {
         RecipeCommand savedCommand = recipeService.saveRecipeCommand(command);
 
         return "redirect:/recipe/" + savedCommand.getId() + "/show";
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public String handleNotFound(){
+        log.error("Handling not found exception");
+
+        return "recipe/404error";
     }
 }
