@@ -3,6 +3,7 @@ package chanwoo.recipe.project.controllers;
 import chanwoo.recipe.project.commands.RecipeCommand;
 import chanwoo.recipe.project.domain.Recipe;
 import chanwoo.recipe.project.exceptions.NotFoundException;
+import chanwoo.recipe.project.exceptions.NumberFormatException;
 import chanwoo.recipe.project.services.RecipeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.text.NumberFormat;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -111,5 +114,12 @@ class RecipeControllerTest {
         mockMvc.perform(get("/recipe/1/show"))
                 .andExpect(status().isNotFound())
                 .andExpect(view().name("recipe/404error"));
+    }
+
+    @Test
+    public void testNumberFormatException() throws Exception{
+        mockMvc.perform(get("/recipe/abcd/show"))
+                .andExpect(status().isBadRequest())
+                .andExpect(view().name("recipe/400error"));
     }
 }

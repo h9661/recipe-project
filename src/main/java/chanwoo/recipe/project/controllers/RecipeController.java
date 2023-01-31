@@ -3,6 +3,7 @@ package chanwoo.recipe.project.controllers;
 import chanwoo.recipe.project.commands.RecipeCommand;
 import chanwoo.recipe.project.domain.Recipe;
 import chanwoo.recipe.project.exceptions.NotFoundException;
+import chanwoo.recipe.project.exceptions.NumberFormatException;
 import chanwoo.recipe.project.services.RecipeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,9 @@ public class RecipeController {
     @GetMapping
     @RequestMapping("/recipe/{id}/show")
     public String showById(@PathVariable String id, Model model){
+        if(id == null || !id.matches("-?\\d+")){
+            throw new NumberFormatException("invalid id value: " + id);
+        }
 
         model.addAttribute("recipe", recipeService.findById(Long.valueOf(id)));
         return "recipe/show";
@@ -72,5 +76,16 @@ public class RecipeController {
         model.addAttribute("exception", exception);
 
         return "recipe/404error";
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NumberFormatException.class)
+    public String handleNumberFormatException(Exception exception, Model model){
+        log.error("handling number format exception");
+        log.error(exception.getMessage());
+
+        model.addAttribute("exception", exception);
+
+        return "recipe/400error";
     }
 }
