@@ -5,6 +5,7 @@ import chanwoo.recipe.project.commands.RecipeCommand;
 import chanwoo.recipe.project.converters.*;
 import chanwoo.recipe.project.domain.Ingredient;
 import chanwoo.recipe.project.domain.Recipe;
+import chanwoo.recipe.project.exceptions.NotFoundException;
 import chanwoo.recipe.project.repository.RecipeRepository;
 import chanwoo.recipe.project.repository.UnitOfMeasureRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,6 +57,17 @@ public class RecipeServiceImplTest {
 
         verify(recipeRepository, times(1)).findById(anyLong());
         verify(recipeRepository, never()).findAll();
+    }
+
+    @Test
+    public void testGetRecipeNotFound() throws Exception{
+        Optional<Recipe> recipeOptional = Optional.empty();
+
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        assertThrows(NotFoundException.class, () -> {
+            recipeService.findById(1L).getId();
+        });
     }
 
     @Test

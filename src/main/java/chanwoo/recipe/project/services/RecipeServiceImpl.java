@@ -4,6 +4,7 @@ import chanwoo.recipe.project.commands.RecipeCommand;
 import chanwoo.recipe.project.converters.RecipeCommandToRecipe;
 import chanwoo.recipe.project.converters.RecipeToRecipeCommand;
 import chanwoo.recipe.project.domain.Recipe;
+import chanwoo.recipe.project.exceptions.NotFoundException;
 import chanwoo.recipe.project.repository.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class RecipeServiceImpl implements RecipeService {
         Optional<Recipe> recipeOptional = recipeRepository.findById(l);
 
         if (!recipeOptional.isPresent()) {
-            throw new RuntimeException("Recipe Not Found!");
+            throw new NotFoundException("Recipe Not Found");
         }
 
         return recipeOptional.get();
